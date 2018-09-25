@@ -1,0 +1,20 @@
+# Command Line
+## Check Port List
+openstack port list --project <project_name>
+## Show Port
+openstack port show <port_id>
+## Check list Qos
+openstack network qos policy list
+## set qos for port
+neutron port-update [port_id] --qos-policy [name_qos]
+## unset qos
+neutron port-update [port_id] --no-qos-policy
+## Create Volume
+ openstack image create trusty-server-cloudimg-amd64-qcow2 --disk-format qcow2 --container-format bare --file trusty-server-cloudimg-amd64-disk1.img
+## Check list server
+Openstack server list --all-project --ip <IP_ADD>
+opentack server list --all-project --host <hostname_compte>
+## Set status volume
+openstack volume set --state <state> <ID_VOLUME>
+## add port
+nova interface-attach --port-id $PID <Nova instance name>
