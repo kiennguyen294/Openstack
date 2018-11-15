@@ -18,3 +18,19 @@ opentack server list --all-project --host <hostname_compte>
 openstack volume set --state <state> <ID_VOLUME>
 ## add port
 nova interface-attach --port-id $PID <Nova instance name>
+## create project
+openstack project create  <project-name> --domain default
+## enable project
+openstack project set PROJECT_ID --enable
+## role list
+openstack role list
+## add role admin for project
+openstack role add --user USER_NAME --project TENANT_ID ROLE_NAME
+
+## limit cpu
+virsh schedinfo instance-00001f3b --config --live vcpu_quota=40000 cpu_shares=6144
+
+## Note
+- The optional shares element specifies the proportional weighted share for the domain. If this is omitted, it defaults to the OS provided defaults. NB, There is no unit for the value, it's a relative measure based on the setting of other VM, e.g. A VM configured with value 2048 will get twice as much CPU time as a VM configured with value 1024
+
+- The optional quota element specifies the maximum allowed bandwidth (unit: microseconds). A domain with quota as any negative value indicates that the domain has infinite bandwidth for vCPU threads, which means that it is not bandwidth controlled. The value should be in range [1000, 18446744073709551] or less than 0. A quota with value 0 means no value. You can use this feature to ensure that all vCPUs run at the same spe
