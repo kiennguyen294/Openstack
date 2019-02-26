@@ -35,9 +35,49 @@ virsh schedinfo instance-00001f3b --config --live vcpu_quota=40000 cpu_shares=61
 
 - The optional quota element specifies the maximum allowed bandwidth (unit: microseconds). A domain with quota as any negative value indicates that the domain has infinite bandwidth for vCPU threads, which means that it is not bandwidth controlled. The value should be in range [1000, 18446744073709551] or less than 0. A quota with value 0 means no value. You can use this feature to ensure that all vCPUs run at the same spe
 
+- (vcpu * quota)/period
+
 
 ## Mout disk
 virsh domblklist 2691df34-c6fa-4ef1-8ac4-2712098b2a80
 ls -l /dev/disk/by-id/* | grep 3600a0980383036634f2b492d39465755
 mkdir /mnt/bangns
 mount -o ro -t ntfs /dev/disk/by-id/dm-name-3600a0980383036634f2b492d39465755-part2 /mnt/bangns/
+
+# mount disk
+mount -t "ntfs" -o "uhelper=udisks2,nodev,nosuid,uid=1000,gid=1000" "/dev/sdb2" /media/master/Ubuntu_data/ -o ro
+
+mount -t "ntfs" -o "uhelper=udisks2,nodev,nosuid,uid=1000,gid=1000" "/dev/sdb1" /media/master/Win_data/ -o ro
+
+
+# scripts del list vm
+for V in `nova list | awk '{print $4}' | grep -v ^N | grep -v ^$`
+do
+echo $V ;
+nova delete $V ;
+done
+
+# mout volume and change pass win.
+openstack server stop 
+eaca3951-8431-4fd4-8908-37cd8e428178
+
+virsh edit eaca3951-8431-4fd4-8908-37cd8e428178
+-> 3600a0980383036634f2b492d39464544
+
+ls -l /dev/disk/by-id/* | grep 3600a0980383036634f2b492d39464544
+-> /dev/disk/by-id/dm-name-3600a0980383036634f2b492d39464544-part2
+
+mount /dev/disk/by-id/dm-name-3600a0980383036634f2b492d39464544-part2 /mnt/zincgroup
+cd /mnt/zincgroup/Windows/System32/config/
+cp SAM ~/SAM.bak
+
+apt install chntpw
+
+chntpw -u Administrator SAM
+2 (enable passwd)
+1 (clear passwd)
+q (save)
+
+openstack server start 
+eaca3951-8431-4fd4-8908-37cd8e428178
+
