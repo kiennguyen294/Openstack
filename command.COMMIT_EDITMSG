@@ -81,3 +81,4 @@ q (save)
 openstack server start 
 eaca3951-8431-4fd4-8908-37cd8e428178
 
+grep 2018 backup_ngocanh | awk '{print $2}'  > ngocanh_2018.txr
