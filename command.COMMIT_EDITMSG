@@ -82,3 +82,38 @@ openstack server start
 eaca3951-8431-4fd4-8908-37cd8e428178
 
 grep 2018 backup_ngocanh | awk '{print $2}'  > ngocanh_2018.txr
+
+/usr/local/bin/uwsgi --ini /etc/heat/heat-api-uwsgi.ini
+
+ /usr/local/bin/uwsgi --ini /etc/heat/heat-api-cfn-uwsgi.ini
+
+ /usr/bin/python /usr/local/bin/heat-engine --config-file=/etc/heat/heat.conf
+
+
+
+ps -ef | grep heat > heat_process
+grep stack heat_process | awk '{print $2}'  > heat_id
+for i in $(cat heat_id); do
+  kill -9 $i
+done
+
+
+/usr/bin/python /usr/local/bin/neutron-dhcp-agent --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/dhcp_agent.ini
+
+
+magnum baymodel-create --name k8s_template \
+--image Fedora-Atomic-27-20180212.2.x86_64 \
+--external-network 	public \
+--docker-volume-size 10 \
+--network-driver flannel \
+--dns-nameserver 8.8.8.8 \
+--master-flavor m1.small \
+--flavor m1.small \
+--keypair testkey \
+--coe kubernetes
+
+openstack coe cluster create --name k8s_cluster \
+--cluster-template k8s_template  \
+--master-count 1 \
+--node-count 1 \
+--keypair kiennn-lab
