@@ -101,19 +101,123 @@ done
 /usr/bin/python /usr/local/bin/neutron-dhcp-agent --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/dhcp_agent.ini
 
 
-magnum baymodel-create --name k8s_template \
---image Fedora-Atomic-27-20180212.2.x86_64 \
---external-network 	public \
---docker-volume-size 10 \
+magnum baymodel-create  --name k8s_queens \
+--image  atomic-fedora-26 \
+--external-network 	Public_171.244.48.0_24 \
+--volume-driver cinder \
+--docker-storage-driver overlay \
+--labels docker_volume_type=SSD-1 \
+--docker-volume-size 50 \
 --network-driver flannel \
 --dns-nameserver 8.8.8.8 \
---master-flavor m1.small \
---flavor m1.small \
---keypair testkey \
+--master-flavor 8c_8g \
+--flavor 8c_8g \
+--keypair kiennn-lab \
 --coe kubernetes
 
-openstack coe cluster create --name k8s_cluster \
---cluster-template k8s_template  \
+magnum bay-create --name k8s_queens \
+--baymodel k8s_queens  \
 --master-count 1 \
---node-count 1 \
---keypair kiennn-lab
+--node-count 1
+
+
+
+
+
+
+
+
+
+magnum bay-create --name k8sbay --baymodel k8s_template --node-count 1 --master-count 1
+
+
+
+root@hl-controller-3:/home/kiennn# openstack coe cluster template create
+usage: openstack coe cluster template create [-h]
+                                             [-f {json,shell,table,value,yaml}]
+                                             [-c COLUMN]
+                                             [--max-width <integer>]
+                                             [--fit-width] [--print-empty]
+                                             [--noindent] [--prefix PREFIX]
+                                             [--name <name>] --coe <coe>
+                                             --image <image>
+                                             --external-network
+                                             <external-network>
+                                             [--keypair <keypair>]
+                                             [--fixed-network <fixed-network>]
+                                             [--fixed-subnet <fixed-subnet>]
+                                             [--network-driver <network-driver>]
+                                             [--volume-driver <volume-driver>]
+                                             [--dns-nameserver <dns-nameserver>]
+                                             [--flavor <flavor>]
+                                             [--master-flavor <master-flavor>]
+                                             [--docker-volume-size <docker-volume-size>]
+                                             [--docker-storage-driver <docker-storage-driver>]
+                                             [--http-proxy <http-proxy>]
+                                             [--https-proxy <https-proxy>]
+                                             [--no-proxy <no-proxy>]
+                                             [--labels <KEY1=VALUE1,KEY2=VALUE2;KEY3=VALUE3...>]
+                                             [--tls-disabled] [--public]
+                                             [--registry-enabled]
+                                             [--server-type <server-type>]
+                                             [--master-lb-enabled]
+                                             [--floating-ip-enabled]
+openstack coe cluster template create: error: argument --coe is required
+root@hl-controller-3:/home/kiennn# openstack coe cluster  create
+usage: openstack coe cluster create [-h] --cluster-template <cluster-template>
+                                    [--discovery-url <discovery-url>]
+                                    [--docker-volume-size <docker-volume-size>]
+                                    [--keypair <keypair>]
+                                    [--master-count <master-count>]
+                                    [--name <name>]
+                                    [--node-count <node-count>]
+                                    [--timeout <timeout>]
+openstack coe cluster create: error: argument --cluster-template is required
+
+
+
+
+
+
+
+
+
+
+
+
+
+openstack coe cluster template create k8s_queens_01 \
+--image  fedora-atomic-latest \
+--external-network 	Float_Public_125.212.237.0_24 \
+--volume-driver cinder \
+--docker-storage-driver overlay \
+--labels docker_volume_type=SSD-1 \
+--docker-volume-size 50 \
+--network-driver flannel \
+--dns-nameserver 8.8.8.8 \
+--master-flavor 8c_8g \
+--flavor 8c_8g \
+--keypair kiennn-lab \
+--coe kubernetes
+
+openstack coe cluster create k8s_queens_01 \
+--cluster-template k8s_queens_01  \
+--master-count 1 \
+--node-count 1
+
+
+
+
+ systemctl status kube-proxy
+  systemctl start kube-proxy
+ systemctl status kube-proxy
+systemctl status kube-proxy
+ systemctl status kube-proxy
+systemctl status kube-apiserver
+ systemctl status kube-controller-manager
+  systemctl status kube-scheduler
+
+
+restore database:
+	- delete old database;
+	- restore use file backup: mysql < backup_file.sql
